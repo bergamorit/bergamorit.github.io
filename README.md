@@ -1,2 +1,4 @@
-## Graphical Visualisation Technology
+## Graphical Visualisation Technologies
 Autor: Moritz Bergan (7008078)
+
+### EA 1: Scheibe
