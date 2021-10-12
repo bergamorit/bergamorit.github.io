@@ -1,4 +1,4 @@
 ## Graphical Visualisation Technologies
 Autor: Moritz Bergan (7008078)
 
-### <a href="https://bergamorit.github.io/EA1/" target="_blank">EA 1: Scheibe</a>
+### <a target="_blank" rel="noopener noreferrer" href="https://bergamorit.github.io/EA1/">EA 1: Scheibe</a>
