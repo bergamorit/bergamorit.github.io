@@ -13,7 +13,7 @@ window.onkeydown = function(evt) {
             animateImage();
             break;
     case ('L'):
-            isConstantlyAnimated = false;
+            turnLeft();
             break;
     case ('R'):
             turnRight();
@@ -49,6 +49,31 @@ function animateImage() {
     }
 }
 
+//Links drehen
+function turnLeft(){
+    var imageObj = new Image();
+    imageObj.onload = function() {
+        var img = document.getElementById('vinyl');
+        img.setAttribute('src', this.src);
+    }
+    imageObj.src = "textures/" + "Vinyl" + bildNummer + ".png";
+
+    //Scheibe eine Stufe nach links drehen
+    if(isConstantlyAnimated == true){
+        clearInterval(animationInterval);
+            for (var i = 0; i < animationInterval; i++){
+                window.clearInterval(i);
+            }
+    isConstantlyAnimated = false;
+    }
+    if (bildNummer > 1) {
+            bildNummer --;
+    } else {
+            bildNummer = 36;
+    }
+    imageObj.src = "textures/" + "Vinyl" + bildNummer + ".png";
+}
+
 //Rechts drehen
 function turnRight(){
     var imageObj = new Image();
@@ -58,7 +83,7 @@ function turnRight(){
     }
     imageObj.src = "textures/" + "Vinyl" + bildNummer + ".png";
 
-    //Scheibe eine Stufe nach rechts
+    //Scheibe eine Stufe nach rechts drehen
     if(isConstantlyAnimated == true){
         clearInterval(animationInterval);
             for (var i = 0; i < animationInterval; i++){
