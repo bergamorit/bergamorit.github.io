@@ -145,7 +145,7 @@
 /* Hero Section */
 .hero {
   background: #fff;
-  padding: 200px 0;
+  padding: 100px 0;
 }
 .hero__container {
   display: flex;
@@ -529,5 +529,18 @@
 
   .social__media--wrap {
     flex-direction: column;
+  }
+}
+
+#spritesheet {
+  height: 325px;
+  width: 184px;
+  background: url("textures/SpriteSheet.png")
+    0px 0px;
+  animation: play 0.8s steps(8) infinite;
+}
+@keyframes play {
+  100% {
+    background-position: -1472px;
   }
 }

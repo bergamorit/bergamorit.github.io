@@ -99,5 +99,3 @@ function turnRight(){
     }
     imageObj.src = "textures/" + "Vinyl" + bildNummer + ".png";
 }
-
-///Sprite Sheet Animation///
