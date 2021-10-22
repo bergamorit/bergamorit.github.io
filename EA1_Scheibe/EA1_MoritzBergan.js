@@ -2,10 +2,12 @@
 var isConstantlyAnimated = false;
 var bildNummer = 1;
 const speed = 40;
+var clickedLeft = false;
+var clickedRight = false;
 
 
 window.onkeydown = function(evt) {
-
+    console.log(evt);
     var key = evt.which ? evt.which : evt.keyCode;
     var c = String.fromCharCode(key);
     switch (c) {
@@ -14,11 +16,31 @@ window.onkeydown = function(evt) {
             animateImage();
             break;
     case ('L'):
+        if (!clickedLeft) {
             turnLeft();
-            break;
+            clickedLeft = true;
+        }
+        break;
     case ('R'):
+        if (!clickedRight) {
             turnRight();
-            break;
+            clickedRight = true;
+        }
+        break;
+    }
+}
+
+window.onkeyup = function(evt) {
+    console.log(evt);
+    var key = evt.which ? evt.which : evt.keyCode;
+    var c = String.fromCharCode(key);
+    switch (c) {
+    case ('L'):
+        clickedLeft = false;
+        break;
+    case ('R'):
+        clickedRight = false;
+        break;
     }
 }
 
