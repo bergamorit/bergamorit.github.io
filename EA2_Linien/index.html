@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EA1 MoritzBergan</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="EA1_MoritzBergan.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.14.0/css/all.css"
+      integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc"
+      crossorigin="anonymous"/>
+  </head>
+
+  <body>
+    <!-- Navbar Section -->
+    <nav class="navbar">
+      <div class="navbar__container">
+        <a href="#home" id="navbar__logo"><img src="media/MUTZE_M.png" alt="MUTZE" style="width:50px"></a>
+        <div class="navbar__toggle" id="mobile-menu">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </div>
+        <ul class="navbar__menu">
+          <li class="navbar__item">
+            <a href="#home" class="navbar__links" id="home-page">Scheibe</a>
+          </li>
+          <li class="navbar__item">
+            <a href="#about" class="navbar__links" id="about-page">SpriteSheet</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero" id="home">
+      <center><h1>Scheibe</h1></center>
+      <div class="hero__container">
+        <p>Toggle automation = A<br> Left = L<br>Right = R<p>
+        <img style="max-width: 50%;"  style="height: auto;" id="vinyl" src="textures/Vinyl1.png">
+      </div>
+    </div>
+
+    <!-- About Section -->
+    <div class="main" id="about">
+      <center><h1>Sprite Sheet</h1></center>
+      <div class="hero__container">
+        <div id="spritesheet">
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
