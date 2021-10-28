@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EA1 MoritzBergan</title>
+    <title>EA2 MoritzBergan</title>
     <link rel="stylesheet" href="styles.css" />
     <script src="EA1_MoritzBergan.js"></script>
     <link
@@ -24,31 +24,69 @@
           <span class="bar"></span>
         </div>
         <ul class="navbar__menu">
-          <li class="navbar__item">
-            <a href="#home" class="navbar__links" id="home-page">Scheibe</a>
-          </li>
-          <li class="navbar__item">
-            <a href="#about" class="navbar__links" id="about-page">SpriteSheet</a>
-          </li>
         </ul>
       </div>
     </nav>
 
     <!-- Hero Section -->
     <div class="hero" id="home">
-      <center><h1>Scheibe</h1></center>
+      <center><h1>2D Geometrie aus Linien</h1></center>
       <div class="hero__container">
-        <p>Toggle automation = A<br> Left = L<br>Right = R<p>
-        <img style="max-width: 50%;"  style="height: auto;" id="vinyl" src="textures/Vinyl1.png">
-      </div>
-    </div>
+        <canvas id="canvas" width="640px" height="480px"></canvas>
+        <script type="text/javascript">
 
-    <!-- About Section -->
-    <div class="main" id="about">
-      <center><h1>Sprite Sheet</h1></center>
-      <div class="hero__container">
-        <div id="spritesheet">
-        </div>
+            // Get the WebGL context
+            var canvas = document.getElementById('canvas');
+            var gl = canvas.getContext('experimental-webgl');
+
+            // Pipeline setup
+            gl.clearColor(0, 0, 0, 1);
+
+            // Compile a vertex shader
+            var vsSource = 'attribute vec2 pos;'+
+            'void main(){ gl_Position = vec4(pos * 0.1 - 0.6, 0, 1.2);'+
+            'gl_PointSize = 10.0; }';
+            var vs = gl.createShader(gl.VERTEX_SHADER);
+            gl.shaderSource(vs, vsSource);
+            gl.compileShader(vs);
+
+            // Compile a fragment shader
+            fsSouce =  'void main() { gl_FragColor = vec4(1,1,1,1); }';
+            var fs = gl.createShader(gl.FRAGMENT_SHADER);
+            gl.shaderSource(fs, fsSouce);
+            gl.compileShader(fs);
+
+            // Link together into a program
+            var prog = gl.createProgram();
+            gl.attachShader(prog, vs);
+            gl.attachShader(prog, fs);
+            gl.linkProgram(prog);
+            gl.useProgram(prog);
+
+            // Load vertex data into a buffer
+            var vertices = new Float32Array([
+              2,4, 4,2, 4,4, 2,4, 4,6, 4,4, 6,4, 4,6, 4,2, 6,4,
+              6,4, 4,6, 2,4,
+              8,4, 6,6, 4,8, 2,6, 0,4, 2,4, 0,4, 0,4, 4,0, 8,4,
+              8,0, 8,8, 0,8, 0,0, 8,0,
+              10,4, 10,4, 8,8, 4,10, 4,-2, 1,0, 0,0, -4,2, -2,6, 0,8,
+              8,8, 8,12, 0,8,
+              8,8, 12,4, 9,2, 12,-1, 12,9, 10,4, 12,9, 10,6
+            ]);
+            var vbo = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+            gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+            // Bind vertex buffer to attribute variable
+            var posAttrib = gl.getAttribLocation(prog, 'pos');
+            gl.vertexAttribPointer(posAttrib, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(posAttrib);
+            
+            // Clear framebuffer and render primitives
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.drawArrays(gl.LINE_STRIP, 0, 49);
+
+        </script>
       </div>
     </div>
 
