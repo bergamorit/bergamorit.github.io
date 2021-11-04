@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+    @font-face { font-family: 'Origami'; src: url('media/Origami.otf');
+    } 
+      h2 {
+        font-size: 3rem;
+        font-family: 'Origami'
+      }
+    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EA3 MoritzBergan</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.14.0/css/all.css"
+      integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc"
+      crossorigin="anonymous"/>
+  </head>
+
+  <body>
+    <!-- Navbar Section -->
+    <nav class="navbar">
+      <div class="navbar__container">
+        <a href="#home" id="navbar__logo"><img src="media/MUTZE_M.png" alt="MUTZE" style="width:50px"></a>
+        <div class="navbar__toggle" id="mobile-menu">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </div>
+        <ul class="navbar__menu">
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero" id="home">
+      <center><h1>2D Geometrie in Farbe</h1></center>
+      <div class="hero__container">
+        <canvas id="canvas" width="500" height="500"></canvas>
+
+        <script>
+          // Get the WebGL context.
+          var canvas = document.getElementById('canvas');
+          var gl = canvas.getContext('experimental-webgl');
+
+          // Pipeline setup.
+          gl.clearColor(1, 1, 1, 1);
+
+          // Backface culling.
+          gl.frontFace(gl.CCW);
+          gl.enable(gl.CULL_FACE);
+          gl.cullFace(gl.BACK); // or gl.FRONT
+
+          // Compile vertex shader.
+          var vsSource = ''+
+              'attribute vec3 pos;'+
+              'attribute vec4 col;'+
+              'varying vec4 color;'+
+              'void main(){'+
+              'color = col;'+                 
+              'gl_Position = vec4(pos-0.63, 0.7);'+
+              '}';
+
+          var vs = gl.createShader(gl.VERTEX_SHADER);
+          gl.shaderSource(vs, vsSource);
+          gl.compileShader(vs);
+
+          // Compile fragment shader.
+          fsSouce = 'precision mediump float;'+ 
+              'varying vec4 color;'+
+              'void main() {'+
+              'gl_FragColor = color;'+
+              '}';
+
+          var fs = gl.createShader(gl.FRAGMENT_SHADER);
+          gl.shaderSource(fs, fsSouce);
+          gl.compileShader(fs);
+
+          // Link shader together into a program.
+          var prog = gl.createProgram();
+          gl.attachShader(prog, vs);
+          gl.attachShader(prog, fs);
+          gl.linkProgram(prog);
+          gl.useProgram(prog);
+
+          // Vertex data.
+          // Positions.
+          var vertices = new Float32Array([
+            0.2,0, 0.6,0.4, 0.2,0.65,
+            0.2,0, 0.8,0.1, 0.8,0.9,
+            0.8,0.9, 0.8,0.6, 1.1,0.5
+          ]);
+
+          // Colors as rgba.
+          var colors = new Float32Array([
+            0.2,0,0,1, 0.6,0,0,1, 1,0,0,1,
+            0.7,0,0,1, 0.5,0,0,1, 1,0,0,1,
+            0.9,0,0,1, 0.2,0,0,1, 0.9,0,0,1
+          ]);
+
+          // Index data.
+          var indices = new Uint16Array([
+            0,1,2 ,3,4,5, 6,7,8
+          ]);
+
+          // Setup position vertex buffer object.
+          var vboPos = gl.createBuffer();
+          gl.bindBuffer(gl.ARRAY_BUFFER, vboPos);
+          gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+          // Bind vertex buffer to attribute variable.
+          var posAttrib = gl.getAttribLocation(prog, 'pos');
+          gl.vertexAttribPointer(posAttrib, 2, gl.FLOAT, false, 0, 0);
+          gl.enableVertexAttribArray(posAttrib);
+
+          // Setup color vertex buffer object.
+          var vboCol = gl.createBuffer();
+          gl.bindBuffer(gl.ARRAY_BUFFER, vboCol);
+          gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW);
+
+          // Bind vertex buffer to attribute variable.
+          var colAttrib = gl.getAttribLocation(prog, 'col');
+          gl.vertexAttribPointer(colAttrib, 4, gl.FLOAT, false, 0, 0);
+          gl.enableVertexAttribArray(colAttrib);
+
+          // Setup index buffer object.
+          var ibo = gl.createBuffer();
+          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+          gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, 
+          gl.STATIC_DRAW);
+          ibo.numerOfEmements = indices.length;
+
+          // Clear framebuffer and render primitives.
+          gl.clear(gl.COLOR_BUFFER_BIT);
+          gl.drawElements(gl.TRIANGLES, ibo.numerOfEmements, 
+          gl.UNSIGNED_SHORT, 0);
+
+        </script>
+
+<center><h2>Origami</h2></center>
+
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
