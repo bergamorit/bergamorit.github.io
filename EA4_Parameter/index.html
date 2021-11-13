@@ -1,0 +1,60 @@
+<!DOCTYPE html5>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>EA4 MoritzBergan</title>
+        <link rel="stylesheet" href="styles.css" />
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css"
+            integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc"
+            crossorigin="anonymous"/>
+
+        <script src="app.js"></script>
+        <script defer src="Pseudosphere.js"></script>
+        <script defer src="Hyperboloid.js"></script>
+        <script defer src="Tower.js"></script>
+    </head>
+
+        <body>
+            <!-- Navbar Section -->
+            <nav class="navbar">
+                <div class="navbar__container">
+                    <a href="#main" id="navbar__logo"><img src="media/MUTZE_M.png" alt="MUTZE" style="width:50px"></a>
+                        <div class="navbar__toggle" id="mobile-menu">
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                        </div>
+                    <ul class="navbar__menu">
+                    </ul>
+                </div>
+            </nav>
+
+            <div class="main" id="main">
+                Parametrisierte Flächen
+            </div>
+
+            <div class="ea">
+                <canvas onclick="start1()" id="canvas1" width="400" height="400"></canvas>
+                <canvas onclick="start2()" id="canvas2" width="400" height="400"></canvas>
+                <canvas onclick="start3()" id="canvas3" width="400" height="400"></canvas>
+            </div>
+
+            <div class="ea">
+                <h3>Pseudosphere</h3>
+                <h3>Hyperboloid</h3>
+                <h3>Tower (Eigenkreation)</h3>
+                    <p>x = c * (cos(u) * sin(v))</p>
+                    <p>x = c * (a * cosh(v) * cos(u))</p>
+                    <p>x = c * (cos(u) * (3 * cos(v) - cos(3v)))</p>
+                        <p>y = c * (cos(v) + log(tan(v/2)))</p>
+                        <p>y = c * (b * sinh(v))</p>
+                        <p>y = c * (2 + cos(3v) + log(tan(v))*1.7)</p>
+                            <p>z = c * (sin(u) * sin(v))</p>
+                            <p>z = c * (a * cosh(v) * sin(u))</p>
+                            <p>z = c * (sin(u) * sin(v))</p>
+                                <a href="http://www.3d-meier.de/tut3/Seite31.html" target="_blank">http://www.3d-meier.de/tut3/Seite31.html</a>
+                                <a href="http://www.3d-meier.de/tut3/Seite30.html" target="_blank">http://www.3d-meier.de/tut3/Seite30.html</a>
+            </div>
+        </body>
+</html>
