@@ -1,0 +1,87 @@
+<!DOCTYPE html5>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>EA7 MoritzBergan</title>
+        <link rel="stylesheet" href="styles.css" />
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css"
+            integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc"
+            crossorigin="anonymous"/>
+
+        <script src="gl-matrix.js"></script>
+		<script src="VertexData_sphere.js"></script>
+        <script src="VertexData_plane.js"></script>
+        <script src="VertexData_kegel.js"></script>
+        <script src="VertexData_zylinder.js"></script>
+
+        <script defer src="ea7.js"></script>
+
+        <script type="x-shader/x-vertex" id="vertexshader">
+            precision mediump float;
+
+			attribute vec3 aPosition;
+			attribute vec3 aNormal;
+
+			uniform mat4 uPMatrix;
+			uniform mat4 uMVMatrix;
+            uniform mat3 uNMatrix;
+            uniform vec4 uColor;
+
+			varying vec4 vColor;
+
+			void main(){
+                float displacement = cos(aPosition.x) * cos(aPosition.z);
+                vec3 newPosition = aPosition + displacement * vec3(0.0, 0.0, 0.0);
+
+                gl_Position = uPMatrix * uMVMatrix * vec4(newPosition, 1.);
+
+                vec3 tNormal = uNMatrix * aNormal;
+
+                vColor = uColor;
+			}
+		</script>
+
+		<script type="x-shader/x-fragment" id="fragmentshader">
+			precision mediump float;
+			varying vec4 vColor;
+
+			void main() {
+			gl_FragColor = vec4(gl_FragCoord.z, gl_FragCoord.z, gl_FragCoord.z, 1.0);
+			}
+		</script>
+    </head>
+
+    <body onload="app.start()">
+        <!-- Navbar Section -->
+        <nav class="navbar">
+        <div class="navbar__container">
+            <a href="#main" id="navbar__logo"><img src="media/MUTZE_M.png" alt="MUTZE" style="width:50px"></a>
+            <div class="navbar__toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            <ul class="navbar__menu"></ul>
+            </div>
+        </nav>
+
+        <div class="main" id='main'>
+            <br>
+            Z-Buffer Visualisierung<br>
+            <br>
+        </div>
+
+        <!--Content-->
+        <center><canvas id="canvas" width="1000" height="500"></canvas></center>
+        
+        <br><center><h2>Kamera Steuerung</h2></center>
+        <center><p><b>Pfeiltaste hoch</b>, <b>Pfeiltaste runter</b>: Bewegung der Kamera auf Kreisbahn über die Szene.</p></center>
+        <center><p><b>Pfeiltaste links</b>, <b>Pfeiltaste rechts</b>: Bewegung der Kamera auf Kreisbahn um die Szene.</p></center>
+        <center><p><b>R</b>, <b>Shift + R</b>: Zoom</p></center>       
+        <center><p><b>W</b>, <b>S</b>: Bewegung der Kamera nach oben/unten.</p></center>
+        <center><p><b>A</b>, <b>D</b>: Bewegung der Kamera nach links/rechts.</p></center>
+
+    </body>
+    <script src="app.js"></script>
+</html>
