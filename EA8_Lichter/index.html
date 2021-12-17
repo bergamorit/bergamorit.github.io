@@ -1,0 +1,150 @@
+<!DOCTYPE html5>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>EA8 MoritzBergan</title>
+        <link rel="stylesheet" href="styles.css" />
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css"
+            integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc"
+            crossorigin="anonymous"/>
+
+        <script src="gl-matrix.js"></script>
+		<script src="VertexData_sphere.js"></script>
+        <script src="VertexData_plane.js"></script>
+        <script src="VertexData_kegel.js"></script>
+        <script src="VertexData_zylinder.js"></script>
+
+        <script defer src="ea8.js"></script>
+
+        <script type="x-shader/x-vertex" id="vertexshader">
+            attribute vec3 aPosition;
+            attribute vec3 aNormal;
+            
+            uniform mat4 uPMatrix;
+            uniform mat4 uMVMatrix;
+            uniform mat3 uNMatrix;
+
+            varying vec3 vNormal;
+            varying vec4 vPosition;
+
+            void main(){
+            // Calculate vertex position in eye coordinates. 
+            vec4 tPosition = uMVMatrix * vec4(aPosition, 1.0);
+            // Calculate projektion.
+            gl_Position = uPMatrix * tPosition;
+        
+            vec3 tNormal = normalize(uNMatrix * aNormal);
+
+            vPosition = tPosition;
+            vNormal = tNormal;
+			}
+		</script>
+
+		<script type="x-shader/x-fragment" id="fragmentshader">
+			precision mediump float;
+			varying vec3 vNormal;
+            varying vec4 vPosition;
+
+			// Material.
+            struct PhongMaterial {
+                vec3 ka;
+                vec3 kd;
+                vec3 ks;
+                float ke;
+            };
+            uniform PhongMaterial material;
+
+            // Ambient light.
+            uniform vec3 ambientLight;
+
+            // Pointlights.
+            const int MAX_LIGHT_SOURCES = 2;
+            struct LightSource {
+                bool isOn;
+                vec3 position;
+                vec3 color;
+            };
+            uniform LightSource light[MAX_LIGHT_SOURCES];
+
+            // Phong illumination for single light source,
+            // no ambient light.
+            vec3 phong(vec3 p, vec3 n, vec3 v, LightSource l) {
+
+                vec3 L = l.color;
+
+                vec3 s = normalize(l.position - p);
+                vec3 r = reflect(-s, n);
+                
+                float sn = max( dot(s,n), 0.0);
+                float rv = max( dot(r,v), 0.0);
+                            
+                vec3 diffuse = material.kd * L * sn;
+                                            
+                vec3 specular = material.ks * L * pow(rv, material.ke);
+
+                return diffuse + specular;			
+            }
+
+            // Phong illumination for multiple light sources
+            vec3 phong(vec3 p, vec3 n, vec3 v) {
+
+                // Calculate ambient light.
+                vec3 result = material.ka * ambientLight;
+
+                // Add light from all light sources.
+                for(int j=0; j < MAX_LIGHT_SOURCES; j++){
+                    if(light[j].isOn){
+                        result += phong(p, n, v, light[j]);
+                    }
+                }
+                return result;
+            }
+
+            void main() {
+            // Calculate view vector.
+            vec3 v = normalize(-vPosition.xyz);
+            vec3 vNormal = normalize(vNormal);
+            gl_FragColor = vec4( phong(vPosition.xyz, vNormal, v), 1.0);
+}
+		</script>
+    </head>
+
+    <body onload="app.start()">
+        <!-- Navbar Section -->
+        <nav class="navbar">
+        <div class="navbar__container">
+            <a href="#main" id="navbar__logo"><img src="media/MUTZE_M.png" alt="MUTZE" style="width:50px"></a>
+            <div class="navbar__toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            <ul class="navbar__menu"></ul>
+            </div>
+        </nav>
+
+        <div class="main" id='main'>
+            <br>
+            <b>Phong Shading</b> - <a href="index2.html">Toon Shading</a><br>
+            <br>
+        </div>
+
+        <!--Content-->
+        <center><canvas id="canvas" width="1000" height="500"></canvas></center>
+
+        <center><p><b>T</b>: Wireframe-Modus an / aus.</p></center>
+
+        <br><center><h2>Lichter Steuerung</h2></center>
+        <center><p><b>L</b>: Bewegung der Lichter.</p></center>
+        
+        <br><center><h2>Kamera Steuerung</h2></center>
+        <center><p><b>Pfeiltaste hoch</b>, <b>Pfeiltaste runter</b>: Bewegung der Kamera auf Kreisbahn über die Szene.</p></center>
+        <center><p><b>Pfeiltaste links</b>, <b>Pfeiltaste rechts</b>: Bewegung der Kamera auf Kreisbahn um die Szene.</p></center>
+        <center><p><b>R</b>, <b>Shift + R</b>: Zoom</p></center>       
+        <center><p><b>W</b>, <b>S</b>: Bewegung der Kamera nach oben/unten.</p></center>
+        <center><p><b>A</b>, <b>D</b>: Bewegung der Kamera nach links/rechts.</p></center>
+
+    </body>
+    <script src="app.js"></script>
+</html>
