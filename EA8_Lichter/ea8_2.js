@@ -204,18 +204,19 @@ var app = ( function() {
 		var fs = "wireframefill";
 
 		var mSnow = createPhongMaterial({kd:[1.,.98,0.98]});
+		var mDarkGrey = createPhongMaterial({kd:[1.,.98,0.98]});
 		var mDarkBrown = createPhongMaterial({kd:[.36,.25,0.20]});
 		var mPineGreen = createPhongMaterial({kd:[.0,.2,0.0]});
 
 		var cSnow = [1.,.98,0.98, 1];
+		var cDarkGrey = [1.,.98,0.98, 1];
 		var cDarkBrown = [.36,.25,0.20, 1];
 		var cPineGreen = [.0,.2,0.0, 1];
 		
-		createModel("plane", fs, cSnow, [0, 0, 0], [0, 0, 0], [1, 1, 1],mSnow);
 		createModel("sphere", fs, cSnow, [0, -4.3, 0], [Math.PI *.5, 0, 0 ], [5, 4, 5 ],mSnow);
 		createModel("sphere", fs, cSnow, [-2, -2.3, 0], [Math.PI *.5, 0, 0 ], [3, 4, 3 ],mSnow);
 		createModel("sphere", fs, cSnow, [1.4, -2.3, 0.4], [Math.PI *.5, 0, 0 ], [3, 4, 3 ],mSnow);
-		
+
 		//Tanne1
 		createModel("kegel", fs, cPineGreen, [-0.3, 1.38, 0.4], [0, 0, 0], [0.2, 0.6, 0.2],mPineGreen);
 		createModel("kegel", fs, cPineGreen, [-0.3, 1.5, 0.4], [0, 0, 0], [0.16, 0.6, 0.16],mPineGreen);
@@ -255,6 +256,8 @@ var app = ( function() {
 		createModel("kegel", fs, cPineGreen, [-0.45, 1.3, 0.8], [0, 0, 0], [0.14, 0.6, 0.14],mPineGreen);
 		createModel("kegel", fs, cPineGreen, [-0.45, 1.1, 0.8], [0, 0, 0], [0.18, 0.6, 0.18],mPineGreen);
 		createModel("zylinder", fs, cDarkBrown, [-0.45, 0.4, 0.8], [0, 0, 0], [.5, 2.2, .5],mDarkBrown);
+
+		createModel("plane", fs, cDarkGrey, [0, 0, 0], [0, 0, 0], [1, 1, 1],mDarkGrey);
 		
 		interactiveModel = models[0];
     }

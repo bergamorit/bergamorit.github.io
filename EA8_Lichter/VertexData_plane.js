@@ -78,12 +78,6 @@ var plane = ( function() {
 				}
 			}
 		}
-		for (var i = 0; i < vertices.length*3; i +=4*1) {
-			color[i] = 0.1;
-			color[i+1] = 0.1;
-			color[i+2] = 0.1;
-			color[i+3] = 1;
-		}
 	}
 
 	return {
