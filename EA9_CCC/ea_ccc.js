@@ -219,7 +219,6 @@ var app = ( function() {
 			initModels();
 			render();
 
-			myChart.redraw(kugelModels);
 			kugelModels.forEach((kugel) => {
 
 				kugel.moveKugel();

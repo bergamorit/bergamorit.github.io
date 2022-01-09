@@ -5,7 +5,7 @@ var sphere = ( function() {
 	var   translateZ = 0;
 
 	function createVertexData() {
-		var recursionLevel = parseInt(document.getElementById('textCanvas').innerHTML[0]);
+		var recursionLevel = 1;
 	 
 	 var vertices = [];
 	  var normals = [];
