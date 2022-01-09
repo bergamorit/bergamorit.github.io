@@ -1,0 +1,217 @@
+<!DOCTYPE html5>
+<html>
+    <head>
+        <title>EA CCC MoritzBergan</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="styles.css" />
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css"
+            integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc"
+            crossorigin="anonymous"/>
+
+        <script src="gl-matrix.js"></script>
+		<script src="VertexData_sphere.js"></script>
+        <script src="VertexData_plane.js"></script>
+        <script src="Kugel.js"></script>
+
+        <script defer src="ea_ccc.js"></script>
+
+
+        <script type="x-shader/x-vertex" id="vertexshader">
+            precision mediump float;
+
+            attribute vec3 aPosition;
+            attribute vec3 aNormal;
+            
+            uniform mat4 uPMatrix;
+            uniform mat4 uMVMatrix;
+            uniform mat3 uNMatrix;
+            
+			uniform vec4 uColor;
+            varying vec4 vColor;
+                        
+            varying vec3 vNormal;
+			varying vec3 vLightPos;
+			varying vec4 vPos;
+
+            // Ambient light.
+            uniform vec3 ambientLight;
+
+            // Pointlights.
+            const int MAX_LIGHT_SOURCES = 8;
+            struct LightSource {
+                bool isOn;
+                vec3 position;
+                vec3 color;
+            };
+            uniform LightSource light[MAX_LIGHT_SOURCES];
+            
+            // Material.
+            struct PhongMaterial {
+                vec3 ka;
+                vec3 kd;
+                vec3 ks;
+                float ke; 
+            };
+            uniform PhongMaterial material;
+
+            // Phong illumination for single light source,
+			// no ambient light.
+			vec3 phong(vec3 p, vec3 n, vec3 v, LightSource l) {
+
+				vec3 L = l.color;
+
+				vec3 s = normalize(l.position - p);
+				vec3 r = reflect(-s, n);
+
+				float sn = max( dot(s,n), 0.0);
+				float rv = max( dot(r,v), 0.0);
+
+				vec3 diffuse = material.kd * L * sn;
+				
+				vec3 specular = material.ks * L * pow(rv, material.ke);
+
+				return diffuse + specular;
+			}
+
+			// Phong illumination for multiple light sources
+			vec3 phong(vec3 p, vec3 n, vec3 v) {
+
+				// Calculate ambient light.
+				vec3 result = material.ka * ambientLight;
+
+				// Add light from all light sources.
+				for(int j=0; j < MAX_LIGHT_SOURCES; j++){
+					if(light[j].isOn){
+						result += phong(p, n, v, light[j]);
+					}
+				}
+				return result;
+			}
+            
+            void main(){
+                // Calculate vertex position in eye coordinates. 
+                vec4 tPosition = uMVMatrix * vec4(aPosition, 1.0);
+                // Calculate projektion.
+                gl_Position = uPMatrix * tPosition;
+
+                vPos = tPosition;
+            
+                vec3 tNormal = normalize(uNMatrix * aNormal);
+                vNormal = tNormal;
+				vLightPos = light[0].position;
+                
+                // Calculate view vector.
+                vec3 v = normalize(-tPosition.xyz);	
+                
+                //vColor = vec4( phong(tPosition.xyz, tNormal, v), 1.0);
+
+                //vPosition = tPosition;
+                //vNormal = tNormal;
+                vColor = uColor;
+            }
+		</script>
+
+		<script type="x-shader/x-fragment" id="fragmentshader">
+            precision mediump float;
+
+            varying vec4 vPos;
+            varying vec3 vNormal;
+            varying vec4 vColor;
+            varying vec3 vLightPos;
+
+            void main()
+            {
+	            vec4 color = vColor;
+                vec3 lightDirection;
+                vec3 vertexToLightSource = vec3(vLightPos - vPos.xyz);
+                lightDirection = normalize(vertexToLightSource);
+
+	            if(dot(vNormal, lightDirection) > 0.0) {
+                    color = vColor * 0.8;
+	            }
+
+	            if(dot(vNormal, lightDirection) > 0.2) {
+                    color = vColor * 0.6;
+	            }
+
+	            if(dot(vNormal, lightDirection) > 0.4) {
+                    color = vColor * 0.4;
+	            }
+
+	            gl_FragColor = color;
+            }
+		</script>
+    </head>
+
+    <body onload="app.start()">
+        <!-- Navbar Section -->
+        <nav class="navbar">
+        <div class="navbar__container">
+            <a href="#main" id="navbar__logo"><img src="media/MUTZE_M.png" alt="MUTZE" style="width:50px"></a>
+            <div class="navbar__toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            <ul class="navbar__menu"></ul>
+            </div>
+        </nav>
+
+        <div class="main" id='main'>
+            <br>
+            <b>Christmas & Corona Challenge</b>
+            <br>
+        </div>
+
+        <!--Content-->
+        <center><canvas id="canvas" width="1000" height="500"></canvas></center>
+        <br><center><p><b>T</b>: Wireframe-Modus an / aus.</p></center><br>
+        
+        <div class="simNav">
+            <button id="startSimulation">Start Simulation</button><br>
+            <button id="stopSimulation" disabled="true">Stop Simulation</button><br>
+
+            <label id="checkboxParent">
+                <input id="checkbox" type="checkbox" checked="checked" />
+                <span id="checkboxText">Wiederansteckungsszenario (ohne immune Kugeln)</span>
+            </label>
+        </div>
+
+        <div class="slidecontainer" id="sliders">
+
+            <p>Anzahl Kugeln: <span id="valueAnzahlKugelnN"></span></p>
+            <input type="range" min="1" max="20" value="7" class="slider" id="anzahlKugelnN">
+            <br>
+            <br>
+
+            <p>Anzahl Kranke: <span id="valueAnzahlKrankeK"></span>, Anzahl Gesunde:  <span id="valueAnzahlGesundeG"></span></p>
+            <input type="range" min="0" max="20" value="2" class="slider" id="anzahlKrankeK">
+            <br>
+            <br>
+
+            <p>Radius Kugeln (Kontaktwahrscheinlichkeit): <span id="valueKugelRadiusR"></span></p>
+            <input type="range" min="1" max="10" value="10" class="slider" id="kugelRadiusR">
+            <br>
+            <br>
+
+            <p>Zeitschritte zur Gesundung: <span id="valueGesundungsZeitschritteZ"></span></p>
+            <input type="range" min="1" max="500" value="500" class="slider" id="gesundungsZeitschritteZ">
+            <br>
+            <br>
+
+            <p>Simulationsgeschwindigkeit (Zeitschritte): <span id="valueSimulationsGeschwindigkeit"></span></p>
+            <input type="range" min="1" max="100" value="57" class="slider" id="simulationsGeschwindigkeit">
+
+        </div>
+        
+        <br><center><h2>Kamera Steuerung</h2></center>
+        <center><p><b>Pfeiltaste hoch</b>, <b>Pfeiltaste runter</b>: Bewegung der Kamera auf Kreisbahn über die Szene.</p></center>
+        <center><p><b>Pfeiltaste links</b>, <b>Pfeiltaste rechts</b>: Bewegung der Kamera auf Kreisbahn um die Szene.</p></center>
+        <center><p><b>R</b>, <b>Shift + R</b>: Zoom</p></center>       
+        <center><p><b>W</b>, <b>S</b>: Bewegung der Kamera nach oben/unten.</p></center>
+        <center><p><b>A</b>, <b>D</b>: Bewegung der Kamera nach links/rechts.</p></center>
+
+    </body>
+    <script src="app.js"></script>
+</html>
